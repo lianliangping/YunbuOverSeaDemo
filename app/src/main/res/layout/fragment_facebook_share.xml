@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.facebook.share.widget.ShareButton
+        android:id="@+id/btn_facebook_share_link"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分享链接"/>
+    <!--<com.facebook.share.widget.ShareButton
+    android:id="@+id/btn_facebook_share_bitmap"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="分享图片"/>
+    <com.facebook.share.widget.ShareButton
+        android:id="@+id/btn_facebook_share_video"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分享视频"/>
+    <com.facebook.share.widget.ShareButton
+        android:id="@+id/btn_facebook_share_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分享多媒体"/>-->
+</LinearLayout>

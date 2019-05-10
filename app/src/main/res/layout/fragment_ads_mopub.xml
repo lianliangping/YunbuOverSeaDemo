@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <Button
+        android:id="@+id/btn_interstitial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="插屏广告"/>
+    <Button
+        android:id="@+id/btn_rewardVideo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_interstitial"
+        android:text="激励视频"/>
+    <Button
+        android:id="@+id/btn_native"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_rewardVideo"
+        android:text="原生广告"/>
+    <Button
+        android:id="@+id/btn_banner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_native"
+        android:text="横幅广告"/>
+
+    <com.mopub.mobileads.MoPubView
+        android:id="@+id/adview"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/btn_banner"
+        />
+    <RelativeLayout
+        android:id="@+id/native_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/btn_banner"
+        android:layout_marginTop="30dp"></RelativeLayout>
+</RelativeLayout>

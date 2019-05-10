@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btn_ga_business"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="支付打点"/>
+    <Button
+        android:id="@+id/btn_ga_resource_source"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="金币道具增加打点"/>
+    <Button
+        android:id="@+id/btn_ga_resource_sink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="金币道具减少打点"/>
+    <Button
+        android:id="@+id/btn_ga_progression"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="活动任务进展打点"/>
+    <Button
+        android:id="@+id/btn_ga_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="错误事件打点"/>
+    <Button
+        android:id="@+id/btn_ga_design"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义事件打点"/>
+</LinearLayout>

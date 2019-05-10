@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">YunBuGameOverseaSDK</string>
+
+    <string name="facebook_app_id">1303125753067834</string>
+    <string name="fb_login_protocol_scheme">fb1303125753067834</string>
+    <string name="ADMOB_APP_ID" tools:ignore="ExtraTranslation">ca-app-pub-6570689767768599~9596875268</string>
+    <string name="ad_attribution">Ad</string>
+    <string name="banner_ad_unit_id">ca-app-pub-6570689767768599/1743749050</string>
+
+</resources>

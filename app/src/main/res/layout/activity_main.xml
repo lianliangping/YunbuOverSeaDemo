@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn_ads_heyzap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MoPub广告"/>
+    <Button
+        android:id="@+id/btn_ana_adjust"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Adjust打点"/>
+    <Button
+        android:id="@+id/btn_ana_ga"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GameAnalytics打点"/>
+    <Button
+        android:id="@+id/btn_facebook_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Facebook登录"/>
+    <Button
+        android:id="@+id/btn_facebook_share"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Facebook分享"/>
+    <Button
+        android:id="@+id/btn_purchase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Google支付内购"/>
+    <TextView
+        android:id="@+id/tv_test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
