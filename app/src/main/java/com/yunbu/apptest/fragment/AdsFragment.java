@@ -65,6 +65,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         //moPubView = view.findViewById(R.id.adview);
         moPubView = new MoPubView(getActivity());//动态生成banner视图
 
+
     }
 
     private void initEvent(){
