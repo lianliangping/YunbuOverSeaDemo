@@ -14,10 +14,9 @@ import com.gameanalytics.sdk.GAProgressionStatus;
 import com.gameanalytics.sdk.GAResourceFlowType;
 import com.gameanalytics.sdk.GameAnalytics;
 import com.yunbu.apptest.R;
-
 public class GameAnaluticsFragment extends Fragment implements View.OnClickListener {
 
-        private Button btn_business,btn_resource_source,btn_resource_sink,btn_progression,btn_error,btn_design;
+    private Button btn_business,btn_resource_source,btn_resource_sink,btn_progression,btn_error,btn_design;
 
     @Nullable
     @Override

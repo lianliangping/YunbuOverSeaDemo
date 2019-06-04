@@ -1,5 +1,6 @@
 package com.yunbu.apptest.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,10 +41,12 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
     private Button btn_interstitial,btn_rewardVideo,btn_native,btn_banner;
     private MoPubView moPubView;
     private MoPubInterstitial interstitial;
+
     private MoPubNative moPubNative;
     private NativeAd mNativeAd = null;
     private RelativeLayout parentView;//原生广告容器
     private boolean isNativeAdLoaded = false;
+    private  AdapterHelper adapterHelper = null;
 
     @Nullable
     @Override
@@ -60,8 +63,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         btn_native = view.findViewById(R.id.btn_native);
         btn_banner = view.findViewById(R.id.btn_banner);
 
-        parentView = view.findViewById(R.id.native_container);
-
+        parentView = view.findViewById(getActivity().getResources().getIdentifier("native_container","id",getActivity().getPackageName()));
         //moPubView = view.findViewById(R.id.adview);
         moPubView = new MoPubView(getActivity());//动态生成banner视图
 
@@ -100,8 +102,11 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             case R.id.btn_native:
                 if(isNativeAdLoaded){
 
-                    AdapterHelper adapterHelper = new AdapterHelper(getActivity(),0,3);
+                    adapterHelper = new AdapterHelper(getActivity(),0,3);
                     View v1 = adapterHelper.getAdView(null, parentView, mNativeAd, new ViewBinder.Builder(0).build());
+
+
+
                     mNativeAd.setMoPubNativeEventListener(new NativeAd.MoPubNativeEventListener() {
                         @Override
                         public void onImpression(View view) {
@@ -170,17 +175,20 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             }
         });
 
-        ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView();
-        viewGroup.addView(moPubView);
-        FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
+        FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,dip2px(getActivity(),50));
         layoutParams1.gravity = Gravity.BOTTOM;
-        layoutParams1.setMargins(0,0,0,30);
-        moPubView.setLayoutParams(layoutParams1);
+        FrameLayout banner_container = new FrameLayout(getActivity());
+        viewGroup.addView(banner_container,layoutParams1);
+        banner_container.addView(moPubView);
+        moPubView.setClickable(false);
+
+
+        //layoutParams1.setMargins(0,0,0,30);
+        //moPubView.setVisibility(View.INVISIBLE);
     }
 
     private void showBanner(){
-
-
         moPubView.loadAd();
     }
 
@@ -271,6 +279,10 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                 Log.d(Constants.TAG, "Native ad onNativeLoad");
                 mNativeAd = nativeAd;
                 isNativeAdLoaded = true;
+
+                if(adapterHelper != null){
+                    adapterHelper.getAdView(null,parentView,mNativeAd);
+                }
             }
 
             @Override
@@ -285,6 +297,8 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         int titleId = getActivity().getResources().getIdentifier("native_title","id",getActivity().getPackageName());
         int textId = getActivity().getResources().getIdentifier("native_text","id",getActivity().getPackageName());
         int privacyInformationIconImageId = getActivity().getResources().getIdentifier("native_privacy_information_icon_image","id",getActivity().getPackageName());
+
+
         ViewBinder viewBinder  = new ViewBinder.Builder(layoutId)
                 .mainImageId(mainImageId)
                 .iconImageId(iconImageId)
@@ -317,7 +331,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                         .titleId(R.id.facebook_native_title)
                         .textId(R.id.facebook_native_text)
                         // Binding to new layouts from Facebook 4.99.0+
-                        .mediaViewId(R.id.facebook_media)
+                        //.mediaViewId(R.id.facebook_media)
                         .adIconViewId(R.id.facebook_native_icon_image)
                         .adChoicesRelativeLayoutId(R.id.native_ad_choices_relative_layout)
                         .advertiserNameId(R.id.facebook_native_title) // Bind either the titleId or advertiserNameId depending on the FB SDK version
@@ -330,4 +344,10 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         moPubNative.registerAdRenderer(facebookAdRenderer);
         moPubNative.makeRequest();
     }
+
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
 }

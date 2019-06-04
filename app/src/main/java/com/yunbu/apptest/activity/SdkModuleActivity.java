@@ -30,7 +30,9 @@ public class SdkModuleActivity extends AppCompatActivity {
         initSDK();
         switchSdkType();
 
+
     }
+
 
     private void switchSdkType(){
         Intent intent = getIntent();
@@ -69,6 +71,8 @@ public class SdkModuleActivity extends AppCompatActivity {
     private void initEvent(){
 
     }
+
+
 
     private void initSDK(){
 
