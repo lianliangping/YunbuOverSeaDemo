@@ -20,13 +20,13 @@ import com.mopub.common.MoPub;
 import com.mopub.common.SdkConfiguration;
 import com.mopub.common.SdkInitializationListener;
 import com.mopub.common.logging.MoPubLog;
-import com.mopub.mobileads.GooglePlayServicesBanner;
-import com.mopub.mobileads.GooglePlayServicesInterstitial;
 import com.mopub.mobileads.GooglePlayServicesRewardedVideo;
-import com.mopub.nativeads.GooglePlayServicesNative;
 import com.onesignal.OneSignal;
 import com.yunbu.apptest.constants.Constants;
 
+/**
+ * Application类，用于部分SDK的初始化
+ */
 public class ExampleApplication extends Application {
 
     @Override
@@ -74,10 +74,7 @@ public class ExampleApplication extends Application {
         SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(Constants.Mopub_AdUnitId_Banner)
                 .withLogLevel(MoPubLog.LogLevel.DEBUG)
                 .withLegitimateInterestAllowed(false)
-                .withMediationSettings(new GooglePlayServicesBanner.GooglePlayServicesMediationSettings(extras),
-                        new GooglePlayServicesInterstitial.GooglePlayServicesMediationSettings(extras),
-                        new GooglePlayServicesRewardedVideo.GooglePlayServicesMediationSettings(extras),
-                        new GooglePlayServicesNative.GooglePlayServicesMediationSettings(extras))
+                .withMediationSettings(new GooglePlayServicesRewardedVideo.GooglePlayServicesMediationSettings(extras))
                 .build();
         MoPub.initializeSdk(this, sdkConfiguration, new SdkInitializationListener() {
             @Override

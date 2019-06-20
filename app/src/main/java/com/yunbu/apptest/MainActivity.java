@@ -5,22 +5,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.yunbu.apptest.activity.SdkModuleActivity;
 import com.yunbu.apptest.constants.Constants;
 
+/**
+ * 主界面，在这个页面可以选择不同的SDK界面
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private Button btn_ads_heyzap, btn_ana_adjust, btn_ana_ga, btn_facebook_login, btn_facebook_share, btn_purchase;
-    private TextView tv_test;
-    private boolean isLoad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         /*try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.yunbu.apptest",
@@ -50,8 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_facebook_login = findViewById(R.id.btn_facebook_login);
         btn_facebook_share = findViewById(R.id.btn_facebook_share);
         btn_purchase = findViewById(R.id.btn_purchase);
-        tv_test = findViewById(getResources().getIdentifier("tv_test","id",getPackageName()));
-        tv_test.setText("1111111111");
+
     }
 
     private void initEvent() {
@@ -79,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_ads_heyzap:
-                turnToSdkModule(Constants.SdkType_AdMopub);
+            case R.id.btn_ads_heyzap: turnToSdkModule(Constants.SdkType_AdMopub);
+
                 break;
             case R.id.btn_ana_adjust:
                 turnToSdkModule(Constants.SdkType_AnaAdjust);

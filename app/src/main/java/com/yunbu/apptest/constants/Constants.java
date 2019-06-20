@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * 此类定义了一些常量和静态方法
+ */
 public class Constants {
 
     public static final String TAG = "YunBuGame";
@@ -24,11 +27,15 @@ public class Constants {
      * RewardedVideo:920b6145fb1546cf8b5cf2ac34638bb7
      * Native:11a17b188668469fb0412708c3d16813
      */
-    public static final String Mopub_AdUnitId_Banner = "a3cf95ffb4d1425fa92e84a5fd1520d0";
+    public static final String Mopub_AdUnitId_Banner = "b195f8dd8ded45fe847ad89ed1d016da";
     public static final String Mopub_AdUnitId_Interstitial = "918713d8acc741a2a94207b51b2edf3f";
     public static final String Mopub_AdUnitId_RewardedVideo = "809cb952894b4c54af6a2fb1ad4ada59";
     public static final String Mopub_AdUnitId_Native = "0322ada99be24e5a96bf497d4d09307a";
 
+    /**
+     * 获取谷歌原子时间
+     * @return
+     */
     public static long getStandardTime() {
         long time = getWebsiteDatetime("https://time.google.com");
         Log.i(TAG,"google time = "+time);

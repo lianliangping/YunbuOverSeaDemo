@@ -13,6 +13,9 @@ import com.adjust.sdk.Adjust;
 import com.adjust.sdk.AdjustEvent;
 import com.yunbu.apptest.R;
 
+/**
+ * Adjust
+ */
 public class AdjustAnalyticsFragment extends Fragment implements View.OnClickListener {
 
     private Button btn_event,btn_purchase;

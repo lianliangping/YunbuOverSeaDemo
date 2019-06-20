@@ -10,8 +10,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -36,24 +38,28 @@ import com.yunbu.apptest.constants.Constants;
 
 import java.util.Set;
 
+/**
+ * 广告页面
+ */
 public class AdsFragment extends Fragment implements View.OnClickListener {
 
-    private Button btn_interstitial,btn_rewardVideo,btn_native,btn_banner;
-    private MoPubView moPubView;
-    private MoPubInterstitial interstitial;
+    private Button btn_interstitial,btn_rewardVideo,btn_native,btn_banner,btn_hide_native,btn_request_native,btn_hide_banner;
+    private LinearLayout ll_ads_view;
 
-    private MoPubNative moPubNative;
-    private NativeAd mNativeAd = null;
+    private MoPubView moPubView;//banner
+    private MoPubInterstitial interstitial;//插屏
+    private MoPubNative moPubNative;//原生广告
+    private NativeAd mNativeAd = null;//原生广告内容对象
     private RelativeLayout parentView;//原生广告容器
-    private boolean isNativeAdLoaded = false;
-    private  AdapterHelper adapterHelper = null;
+    private boolean isNativeAdLoaded = false;//原生广告是否加载完成
+    private  AdapterHelper adapterHelper = null;//原生广告适配器
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_ads_mopub,container,false);
         initView(view);
-        initEvent();
+        initEvent();//第一次加载广告
         return view;
     }
 
@@ -62,23 +68,30 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         btn_rewardVideo = view.findViewById(R.id.btn_rewardVideo);
         btn_native = view.findViewById(R.id.btn_native);
         btn_banner = view.findViewById(R.id.btn_banner);
+        btn_hide_native = view.findViewById(R.id.btn_hide_native);
+        btn_request_native = view.findViewById(R.id.btn_request_native);
+        btn_hide_banner = view.findViewById(R.id.btn_hide_banner);
+        ll_ads_view = view.findViewById(R.id.ll_ads_view);
 
         parentView = view.findViewById(getActivity().getResources().getIdentifier("native_container","id",getActivity().getPackageName()));
+
         //moPubView = view.findViewById(R.id.adview);
         moPubView = new MoPubView(getActivity());//动态生成banner视图
-
-
     }
+
 
     private void initEvent(){
         btn_interstitial.setOnClickListener(this);
         btn_rewardVideo.setOnClickListener(this);
         btn_native.setOnClickListener(this);
         btn_banner.setOnClickListener(this);
+        btn_hide_native.setOnClickListener(this);
+        btn_request_native.setOnClickListener(this);
+        btn_hide_banner.setOnClickListener(this);
 
-        loadInterstitial();//加载插屏
-        loadRewardVedio();//加载激励视频
-        loadNative();//加载原生广告
+        initAndLoadInterstitial();//加载插屏
+        initAndLoadRewardVedio();//加载激励视频
+        initAndLoadNative();//加载原生广告
         initBanner();
     }
 
@@ -101,32 +114,26 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.btn_native:
                 if(isNativeAdLoaded){
+                    View v1 = adapterHelper.getAdView(null,parentView, mNativeAd, new ViewBinder.Builder(0).build());
 
-                    adapterHelper = new AdapterHelper(getActivity(),0,3);
-                    View v1 = adapterHelper.getAdView(null, parentView, mNativeAd, new ViewBinder.Builder(0).build());
-
-
-
-                    mNativeAd.setMoPubNativeEventListener(new NativeAd.MoPubNativeEventListener() {
-                        @Override
-                        public void onImpression(View view) {
-                            Log.d(Constants.TAG,"onImpression");
-                        }
-
-                        @Override
-                        public void onClick(View view) {
-                            Log.d(Constants.TAG,"onClick");
-                        }
-                    });
                     parentView.addView(v1);
+                    parentView.setVisibility(View.VISIBLE);
                 }else{
                     showToast();
                 }
                 break;
+            case R.id.btn_hide_native:
+                Log.d(Constants.TAG,"native hide");
+                parentView.setVisibility(View.INVISIBLE);
+                break;
+            case R.id.btn_request_native:
+                moPubNative.makeRequest();
+                break;
             case R.id.btn_banner:
                 showBanner();
-                /*Intent intent = new Intent(getActivity(),TestActivity.class);
-                getActivity().startActivity(intent);*/
+                break;
+            case R.id.btn_hide_banner:
+                moPubView.setVisibility(View.INVISIBLE);
                 break;
             default:
 
@@ -138,13 +145,6 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         Toast.makeText(getActivity(),"广告还未加载完成请稍后再试",Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDestroy() {
-        moPubView.destroy();
-        interstitial.destroy();
-        moPubNative.destroy();
-        super.onDestroy();
-    }
 
     private void initBanner(){
         moPubView.setAdUnitId(Constants.Mopub_AdUnitId_Banner); // Enter your Ad Unit ID from www.mopub.com
@@ -152,6 +152,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onBannerLoaded(MoPubView banner) {
                 Log.d(Constants.TAG,"onBannerLoaded,bannerId = "+banner.getAdUnitId());
+
             }
 
             @Override
@@ -174,25 +175,31 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                 Log.d(Constants.TAG,"onBannerCollapsed");
             }
         });
-
+        //控制banner显示位置
         ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
-        FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,dip2px(getActivity(),50));
-        layoutParams1.gravity = Gravity.BOTTOM;
+        FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,dip2px(getActivity(),50));//banner高度为50dp，宽度为充满屏幕
+        layoutParams1.gravity = Gravity.BOTTOM;//显示在屏幕底部
+        layoutParams1.setMargins(0,0,0,dip2px(getActivity(),30));//距离底部30dp
         FrameLayout banner_container = new FrameLayout(getActivity());
         viewGroup.addView(banner_container,layoutParams1);
         banner_container.addView(moPubView);
         moPubView.setClickable(false);
 
 
-        //layoutParams1.setMargins(0,0,0,30);
-        //moPubView.setVisibility(View.INVISIBLE);
     }
 
+    /**
+     * 加载并展示banner
+     */
     private void showBanner(){
+        moPubView.setVisibility(View.VISIBLE);
         moPubView.loadAd();
     }
 
-    private void loadInterstitial(){
+    /**
+     * 加载插屏
+     */
+    private void initAndLoadInterstitial(){
         //插屏
         interstitial = new MoPubInterstitial(getActivity(),Constants.Mopub_AdUnitId_Interstitial);
         interstitial.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
@@ -220,15 +227,18 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onInterstitialDismissed(MoPubInterstitial interstitial1) {
                 Log.d(Constants.TAG,"onInterstitialDismissed");
-                interstitial.load();
+                interstitial.load();//插屏播放完成加载下一个插屏
             }
         });
-        interstitial.load();
+        interstitial.load();//加载插屏
     }
 
-    private void loadRewardVedio(){
+    /**
+     * 加载激励视频
+     */
+    private void initAndLoadRewardVedio(){
         //激励视频
-        MoPubRewardedVideoManager.init(getActivity());
+        MoPubRewardedVideoManager.init(getActivity());//在Application中初始化需要加这行代码，在Activity中初始化请忽略
 
         MoPubRewardedVideos.setRewardedVideoListener(new MoPubRewardedVideoListener() {
             @Override
@@ -260,29 +270,53 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onRewardedVideoClosed(@NonNull String adUnitId) {
                 Log.d(Constants.TAG,"onRewardedVideoClosed");
-                MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);
+
             }
 
             @Override
             public void onRewardedVideoCompleted(@NonNull Set<String> adUnitIds, @NonNull MoPubReward reward) {
                 Log.d(Constants.TAG,"onRewardedVideoCompleted");
+                MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);//激励视频播放完成后加载下一个激励视频
             }
         });
         MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);
     }
 
-    private void loadNative(){
-        //原生
+    //加载原生广告
+    private void initAndLoadNative(){
+        //设置原生广告显示大小和位置
+        LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) parentView.getLayoutParams();
+        layoutParams.setMargins(dip2px(getActivity(),20),0,dip2px(getActivity(),20),0);
+        WindowManager vm = getActivity().getWindowManager();
+        int nativeWidth = vm.getDefaultDisplay().getWidth();//获取屏幕宽度
+        int nativeHeight = vm.getDefaultDisplay().getHeight();//获取屏幕高度
+        layoutParams.width = (int) (0.6*nativeWidth);//设置原生广告宽度
+        layoutParams.height = (int) (0.25*nativeHeight);//设置原生广告高度
+        parentView.setLayoutParams(layoutParams);
+
+
         moPubNative = new MoPubNative(getActivity(), Constants.Mopub_AdUnitId_Native, new MoPubNative.MoPubNativeNetworkListener() {
             @Override
             public void onNativeLoad(NativeAd nativeAd) {
                 Log.d(Constants.TAG, "Native ad onNativeLoad");
                 mNativeAd = nativeAd;
                 isNativeAdLoaded = true;
+                nativeAd.setMoPubNativeEventListener(new NativeAd.MoPubNativeEventListener() {
+                    @Override
+                    public void onImpression(View view) {
+                        Log.d(Constants.TAG,"Native onImpression");
+                    }
 
-                if(adapterHelper != null){
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(Constants.TAG,"Native onClick");
+                    }
+                });
+
+                /*if(adapterHelper != null){
                     adapterHelper.getAdView(null,parentView,mNativeAd);
-                }
+
+                }*/
             }
 
             @Override
@@ -331,7 +365,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                         .titleId(R.id.facebook_native_title)
                         .textId(R.id.facebook_native_text)
                         // Binding to new layouts from Facebook 4.99.0+
-                        //.mediaViewId(R.id.facebook_media)
+                        .mediaViewId(R.id.facebook_media)
                         .adIconViewId(R.id.facebook_native_icon_image)
                         .adChoicesRelativeLayoutId(R.id.native_ad_choices_relative_layout)
                         .advertiserNameId(R.id.facebook_native_title) // Bind either the titleId or advertiserNameId depending on the FB SDK version
@@ -342,12 +376,28 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         moPubNative.registerAdRenderer(moPubStaticNativeAdRenderer);
         moPubNative.registerAdRenderer(googlePlayServicesAdRenderer);
         moPubNative.registerAdRenderer(facebookAdRenderer);
-        moPubNative.makeRequest();
+        moPubNative.makeRequest();//请求广告
+        //渲染原生广告适配器
+        adapterHelper = new AdapterHelper(getActivity(),0,3);
     }
 
+    /**
+     * dp转px
+     * @param context
+     * @param dpValue
+     * @return
+     */
     public static int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    @Override
+    public void onDestroy() {
+        moPubView.destroy();
+        interstitial.destroy();
+        moPubNative.destroy();
+        super.onDestroy();
     }
 
 }

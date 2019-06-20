@@ -16,6 +16,9 @@ import com.yunbu.apptest.fragment.FacebookShareFragment;
 import com.yunbu.apptest.fragment.GameAnaluticsFragment;
 import com.yunbu.apptest.fragment.PurchaseFragment;
 
+/**
+ * SDK Activity
+ */
 public class SdkModuleActivity extends AppCompatActivity {
 
     //private VerifyPurchaseUtil verifyPurchaseUtil;
@@ -25,15 +28,15 @@ public class SdkModuleActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sdk_module);
-        initView();
-        initEvent();
+
         initSDK();
         switchSdkType();
 
-
     }
 
-
+    /**
+     * 加载fragment，不同的fragment代表不同的SDK
+     */
     private void switchSdkType(){
         Intent intent = getIntent();
         int sdkType = intent.getIntExtra("sdkType",-1);
@@ -64,16 +67,9 @@ public class SdkModuleActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container,fragment).commit();
     }
 
-    private void initView(){
-
-    }
-
-    private void initEvent(){
-
-    }
-
-
-
+    /**
+     * 初始化部分SDK
+     */
     private void initSDK(){
 
         //Purchase
