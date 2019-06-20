@@ -7,4 +7,9 @@
     <string name="ad_attribution">Ad</string>
     <string name="banner_ad_unit_id">ca-app-pub-6570689767768599/1743749050</string>
 
+    <string name="native_icon_image">native_icon_image</string>
+    <string name="native_main_image">native_main_image</string>
+    <string name="native_privacy_information_icon_image">Privacy Information Icon image</string>
+    <string name="learn_more">Learn More</string>
+
 </resources>
