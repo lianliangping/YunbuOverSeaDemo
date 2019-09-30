@@ -7,11 +7,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.adjust.sdk.Adjust;
+import com.adjust.sdk.AdjustAttribution;
 import com.adjust.sdk.AdjustConfig;
 import com.adjust.sdk.AdjustEventFailure;
 import com.adjust.sdk.AdjustEventSuccess;
 import com.adjust.sdk.AdjustSessionFailure;
 import com.adjust.sdk.AdjustSessionSuccess;
+import com.adjust.sdk.OnAttributionChangedListener;
 import com.adjust.sdk.OnEventTrackingFailedListener;
 import com.adjust.sdk.OnEventTrackingSucceededListener;
 import com.adjust.sdk.OnSessionTrackingFailedListener;
@@ -37,6 +39,14 @@ public class ExampleApplication extends Application {
         String appToken = "43xexhzps6o0";
         String environment = AdjustConfig.ENVIRONMENT_SANDBOX;
         AdjustConfig config = new AdjustConfig(this, appToken, environment);
+
+        config.setOnAttributionChangedListener(new OnAttributionChangedListener() {
+            @Override
+            public void onAttributionChanged(AdjustAttribution attribution) {
+
+            }
+        });
+
         config.setOnEventTrackingSucceededListener(new OnEventTrackingSucceededListener() {
             @Override
             public void onFinishedEventTrackingSucceeded(AdjustEventSuccess eventSuccessResponseData) {
@@ -83,8 +93,6 @@ public class ExampleApplication extends Application {
                 Toast.makeText(getApplicationContext(),"Mopub  init finish!",Toast.LENGTH_LONG).show();
             }
         });
-
-
 
         // OneSignal Initialization
         //OneSignal.setLogLevel(OneSignal.LOG_LEVEL.DEBUG,OneSignal.LOG_LEVEL.DEBUG);

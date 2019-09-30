@@ -2,9 +2,6 @@ package com.yunbu.apptest.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,6 +13,10 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.mopub.common.MoPubReward;
 import com.mopub.mobileads.MoPubErrorCode;
@@ -33,6 +34,8 @@ import com.mopub.nativeads.MoPubStaticNativeAdRenderer;
 import com.mopub.nativeads.NativeAd;
 import com.mopub.nativeads.NativeErrorCode;
 import com.mopub.nativeads.ViewBinder;
+import com.unity3d.ads.IUnityAdsListener;
+import com.unity3d.ads.UnityAds;
 import com.yunbu.apptest.R;
 import com.yunbu.apptest.constants.Constants;
 
@@ -53,10 +56,15 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
     private RelativeLayout parentView;//原生广告容器
     private boolean isNativeAdLoaded = false;//原生广告是否加载完成
     private  AdapterHelper adapterHelper = null;//原生广告适配器
+    //private InterstitialAd mAdMobInterstitialAd;
+    //private com.facebook.ads.InterstitialAd mFacebookInterstitialAd;
+
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //initUnityAd();
         View view = inflater.inflate(R.layout.fragment_ads_mopub,container,false);
         initView(view);
         initEvent();//第一次加载广告
@@ -102,14 +110,22 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                 if(interstitial.isReady()){
                     interstitial.show();
                 }else{
-                    showToast();
+                    /*if (mAdMobInterstitialAd.isLoaded()){
+                        mAdMobInterstitialAd.show();
+                    }*/
+                    //mAdMobInterstitialAd.loadAd(new AdRequest.Builder().build());
+
+
                 }
                 break;
             case R.id.btn_rewardVideo:
                 if(MoPubRewardedVideos.hasRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo)){
                     MoPubRewardedVideos.showRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);
                 }else{
-                    showToast();
+                    if (UnityAds.isReady (Constants.Unity_Rewarded_PlacementId)) {
+                        UnityAds.show (getActivity(),Constants.Unity_Rewarded_PlacementId);
+                    }
+                    //showToast();
                 }
                 break;
             case R.id.btn_native:
@@ -175,14 +191,23 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
                 Log.d(Constants.TAG,"onBannerCollapsed");
             }
         });
+        /*viewGroup.addView(moPubView);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,FrameLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.BOTTOM;
+        moPubView.setLayoutParams(layoutParams);*/
+
         //控制banner显示位置
         ViewGroup viewGroup = (ViewGroup) getActivity().getWindow().getDecorView().findViewById(android.R.id.content);
         FrameLayout.LayoutParams layoutParams1 = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,dip2px(getActivity(),50));//banner高度为50dp，宽度为充满屏幕
         layoutParams1.gravity = Gravity.BOTTOM;//显示在屏幕底部
-        layoutParams1.setMargins(0,0,0,dip2px(getActivity(),30));//距离底部30dp
+        //layoutParams1.setMargins(0,0,0,dip2px(getActivity(),30));//距离底部30dp
         FrameLayout banner_container = new FrameLayout(getActivity());
         viewGroup.addView(banner_container,layoutParams1);
-        banner_container.addView(moPubView);
+
+        FrameLayout.LayoutParams layoutParams2 = new FrameLayout.LayoutParams(dip2px(getActivity(),320),dip2px(getActivity(),50));//banner高度为50dp，宽度为充满屏幕
+        layoutParams2.gravity = Gravity.CENTER_HORIZONTAL;//水平居中显示
+        banner_container.addView(moPubView,layoutParams2);
+        //banner_container.addView(moPubView);
         moPubView.setClickable(false);
 
 
@@ -231,6 +256,47 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             }
         });
         interstitial.load();//加载插屏
+        /*mAdMobInterstitialAd = new InterstitialAd(getActivity());
+        mAdMobInterstitialAd.setAdUnitId("ca-app-pub-6570689767768599/4808896099");
+        mAdMobInterstitialAd.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Log.d(Constants.TAG,"onAdLoaded");
+                mAdMobInterstitialAd.show();
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Log.d(Constants.TAG,"onAdFailedToLoad");
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when the ad is displayed.
+                Log.d(Constants.TAG,"onAdOpened");
+            }
+
+            @Override
+            public void onAdClicked() {
+                // Code to be executed when the user clicks on an ad.
+                Log.d(Constants.TAG,"onAdClicked");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+                Log.d(Constants.TAG,"onAdLeftApplication");
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when the interstitial ad is closed.
+                Log.d(Constants.TAG,"onAdClosed");
+            }
+        });*/
+        //mAdMobInterstitialAd.loadAd(new AdRequest.Builder().build());
     }
 
     /**
@@ -239,6 +305,7 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
     private void initAndLoadRewardVedio(){
         //激励视频
         MoPubRewardedVideoManager.init(getActivity());//在Application中初始化需要加这行代码，在Activity中初始化请忽略
+
 
         MoPubRewardedVideos.setRewardedVideoListener(new MoPubRewardedVideoListener() {
             @Override
@@ -270,13 +337,13 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onRewardedVideoClosed(@NonNull String adUnitId) {
                 Log.d(Constants.TAG,"onRewardedVideoClosed");
-
+                MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);//激励视频播放完成后加载下一个激励视频
             }
 
             @Override
             public void onRewardedVideoCompleted(@NonNull Set<String> adUnitIds, @NonNull MoPubReward reward) {
                 Log.d(Constants.TAG,"onRewardedVideoCompleted");
-                MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);//激励视频播放完成后加载下一个激励视频
+
             }
         });
         MoPubRewardedVideos.loadRewardedVideo(Constants.Mopub_AdUnitId_RewardedVideo);
@@ -399,5 +466,41 @@ public class AdsFragment extends Fragment implements View.OnClickListener {
         moPubNative.destroy();
         super.onDestroy();
     }
+
+    private void initUnityAd(){
+        final UnityAdsListener myAdsListener = new UnityAdsListener ();
+        // Initialize the SDK:
+        UnityAds.initialize (getActivity(), Constants.Unity_GameId, myAdsListener, false);
+    }
+
+
+
+    private class UnityAdsListener implements IUnityAdsListener {
+
+        @Override
+        public void onUnityAdsReady (String placementId) {
+            // Implement functionality for an ad being ready to show.
+            Log.d(Constants.TAG,"onPlacementContentReady:placementId = "+placementId);
+        }
+
+        @Override
+        public void onUnityAdsStart (String placementId) {
+            // Implement functionality for a user starting to watch an ad.
+            Log.d(Constants.TAG,"onUnityAdsStart:placementId = "+placementId);
+        }
+
+        @Override
+        public void onUnityAdsFinish (String placementId, UnityAds.FinishState finishState) {
+            // Implement functionality for a user finishing an ad.
+            Log.d(Constants.TAG,"onUnityAdsFinish:placementId = "+placementId);
+        }
+
+        @Override
+        public void onUnityAdsError (UnityAds.UnityAdsError error, String message) {
+            // Implement functionality for a Unity Ads service error occurring.
+            Log.d(Constants.TAG,"onUnityAdsError:message = "+message+";error = "+error.name());
+        }
+    }
+
 
 }
